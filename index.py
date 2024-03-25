@@ -4,7 +4,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.webdriver import WebDriver
-
+import random
+from math import floor
 
 def run(invite_link):
     with webdriver.Firefox() as driver:
@@ -19,10 +20,11 @@ def run(invite_link):
         game_state = get_game_state(driver)
         match game_state:
             case "Choose a word":
-                # Buddy is choosing a word
+                # Buddy is choosing a word and drawing
+                choose_word(driver)
                 pass
             case _:
-                # Buddy is drawing
+                # Buddy is guessing the word
                 pass
         
         input('end')
@@ -51,6 +53,15 @@ def get_game_state(driver: WebDriver) -> str:
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".text.show")))
     elem_state = driver.find_element(By.CSS_SELECTOR, ".text.show")
     return elem_state.text
+
+
+def choose_word(driver: WebDriver):
+    words = driver.find_elements(by=By.CSS_SELECTOR, value=".words.show > .word")
+    assert len(words) == 3
+    random_index = (random.random() * 3)
+    chosen_word = words[floor(random_index)]
+    chosen_word.click()
+    pass
 
 
 if __name__ == "__main__":
