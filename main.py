@@ -7,11 +7,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.webdriver import WebDriver
 from quickdraw import QuickDrawData
 from math import floor
+from enum import Enum
 import logging
 import random
-from enum import Enum
+
 
 qd = QuickDrawData()
+
 
 class GameState(Enum):
     GUESSING = "GUESSING"
@@ -174,7 +176,7 @@ def game_loop(driver: WebDriver):
                 is_active = False
                 raise Exception("Unknown game state", default)
         pass
-    logging.info('Game Over')
+    logging.info("Game Over")
     pass
 
 
@@ -216,7 +218,13 @@ def wait_for_round_start(driver: WebDriver):
 
 def guess_word(driver: WebDriver):
     logging.info("guess word")
-    input("guessed word")
+    canvas = driver.find_element(by=By.CSS_SELECTOR, value="#game-canvas > canvas")
+    script = """
+        const canvas = arguments[0];
+        const output = canvas.toDataURL('image/png').substring(22)
+        return output
+    """
+    img_data = driver.execute_script(script, canvas)
     # word_length = get_word_length(driver)
     # global CATEGORIES
     # for category in CATEGORIES.split(",\n"):
@@ -288,7 +296,7 @@ def print_usage():
             functions:
                 create
                 join <invite link>
-            """
+        """
     )
 
 
