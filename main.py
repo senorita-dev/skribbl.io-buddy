@@ -309,7 +309,7 @@ if __name__ == "__main__":
     if function == "create":
         main_create()
     elif function == "join":
-        if len(sys.argv) != 2:
+        if len(sys.argv) != 3:
             print_usage()
             sys.exit(1)
         invite_link = sys.argv[1]
